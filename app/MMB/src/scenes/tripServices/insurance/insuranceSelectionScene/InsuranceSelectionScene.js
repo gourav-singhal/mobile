@@ -15,6 +15,9 @@ import VariantButtons from './variantButtons/VariantButtons';
 import InsuranceSummary from './InsuranceSummaries';
 import IconWithText from './IconWithText';
 import PassengerInfo from './PassengerInfo';
+import InsuranceOverviewSceneContext, {
+  withInsuranceOverviewSceneContext,
+} from '../insuranceOverviewScene/InsuranceOverviewSceneContext';
 import type {
   InsuranceSelectionSceneQueryResponse,
   InsuranceType,
@@ -30,6 +33,13 @@ type State = {|
 |};
 
 class InsuranceSelectionScene extends React.Component<Props, State> {
+  // constructor(props) {
+
+  //   this.state = {
+  //     selectedVariant: 'NONE',
+  //   };
+  // }
+
   state = {
     selectedVariant: 'NONE',
   };
@@ -39,11 +49,25 @@ class InsuranceSelectionScene extends React.Component<Props, State> {
       'mmb.trip_services.insurance.selection.more_info',
     );
 
-  selectVariant = (insuranceType: InsuranceType) =>
+  selectVariant = (insuranceType: InsuranceType) => {
     this.setState({ selectedVariant: insuranceType });
+    const { databaseId } = this.props.navigation.state.params;
+    const passenger = this.props.passengers.find(
+      px => px.databaseId === databaseId,
+    );
+    const updatedPassenger = {
+      ...passenger,
+      insuranceType,
+    };
+    this.props.onPassengerInsuranceChange(updatedPassenger);
+  };
 
   render = () => {
-    const { passenger } = this.props.navigation.state.params;
+    const { databaseId } = this.props.navigation.state.params;
+
+    const passenger = this.props.passengers.find(
+      px => px.databaseId === databaseId,
+    );
 
     return (
       <View style={styleSheet.wrapper}>
@@ -68,12 +92,12 @@ class InsuranceSelectionScene extends React.Component<Props, State> {
         <View style={styleSheet.variantsRow}>
           <VariantButtons
             data={this.props.data}
-            selectedVariant={this.state.selectedVariant}
+            selectedVariant={passenger.insuranceType}
             selectVariant={this.selectVariant}
           />
         </View>
 
-        <InsuranceSummary selectedVariant={this.state.selectedVariant} />
+        <InsuranceSummary selectedVariant={passenger.insuranceType} />
         <TouchableWithoutFeedback onPress={this.goToMoreInfo}>
           <View>
             <IconWithText
@@ -90,7 +114,9 @@ class InsuranceSelectionScene extends React.Component<Props, State> {
   };
 }
 
-export default withNavigation(InsuranceSelectionScene);
+export default withNavigation(
+  withInsuranceOverviewSceneContext(InsuranceSelectionScene),
+);
 
 const styleSheet = StyleSheet.create({
   wrapper: {

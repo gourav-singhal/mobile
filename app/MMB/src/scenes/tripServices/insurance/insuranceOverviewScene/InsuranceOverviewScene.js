@@ -1,6 +1,7 @@
 // @flow strict
 
 import * as React from 'react';
+import idx from 'idx';
 import { ScrollView, View } from 'react-native';
 import { LayoutSingleColumn, TextButton } from '@kiwicom/mobile-shared';
 import { graphql, PublicApiRenderer } from '@kiwicom/mobile-relay';
@@ -10,11 +11,13 @@ import {
   type NavigationType,
 } from '@kiwicom/mobile-navigation';
 
-import InsuranceOverviewPassengerMenuGroup from './InsuranceOverviewPassengerMenuGroup';
-import DestinationImage from './DestinationImage';
-import OrderSummary from './OrderSummary';
-import TripInfo from '../../../components/header/TripInfo';
-import BookingDetailContext from '../../../context/BookingDetailContext';
+import InsuranceOverviewPassengerMenuGroup from '../InsuranceOverviewPassengerMenuGroup';
+import DestinationImage from '../DestinationImage';
+import OrderSummary from '../insuranceOverviewScene/OrderSummary';
+import TripInfo from '../../../../components/header/TripInfo';
+import BookingDetailContext from '../../../../context/BookingDetailContext';
+import { RefundButton, PaymentButton } from './Buttons';
+import { withInsuranceOverviewSceneContext } from './InsuranceOverviewSceneContext';
 import type { InsuranceOverviewSceneQueryResponse } from './__generated__/InsuranceOverviewSceneQuery.graphql';
 
 type Props = {|
@@ -22,7 +25,19 @@ type Props = {|
   +navigation: NavigationType,
 |};
 
-class InsuranceOverviewScene extends React.Component<Props> {
+type State = {|
+  transactionAmount: number,
+|};
+
+class InsuranceOverviewScene extends React.Component<Props, State> {
+  constructor(props) {
+    super(props);
+  }
+
+  state = {
+    transactionAmount: 0,
+  };
+
   navigate = (routeName: RouteNamesType) => {
     this.props.navigation.navigate(routeName);
   };
@@ -35,8 +50,21 @@ class InsuranceOverviewScene extends React.Component<Props> {
     this.navigate('mmb.trip_services.insurance.refund');
   };
 
+  componentDidMount() {
+    const passengers = idx(this.props, _ => _.data.singleBooking.passengers);
+    if (passengers) {
+      this.props.initState(passengers);
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.reset();
+  }
+
   render = () => {
     const { data } = this.props;
+
+    // console.log(data.singleBooking.passengers.map(px => px.databaseId));
 
     return (
       <React.Fragment>
@@ -46,32 +74,27 @@ class InsuranceOverviewScene extends React.Component<Props> {
 
             <TripInfo data={data.singleBooking} />
 
-            <InsuranceOverviewPassengerMenuGroup data={data.singleBooking} />
+            <InsuranceOverviewPassengerMenuGroup />
 
-            <View style={{ padding: 10 }}>
-              <TextButton
-                title={
-                  <Translation id="mmb.trip_services.order.process_to_refund" />
-                }
-                onPress={this.goToTheInsuranceRefund}
-              />
-            </View>
-
-            <View style={{ padding: 10 }}>
-              <TextButton
-                title={
-                  <Translation id="mmb.trip_services.order.process_to_payment" />
-                }
-                onPress={this.goToTheInsurancePayment}
-              />
-            </View>
+            <RefundButton
+              displayed={this.state.transactionAmount < 0}
+              onPress={this.goToTheInsuranceRefund}
+            />
+            <PaymentButton
+              displayed={this.state.transactionAmount > 0}
+              onPress={this.goToTheInsurancePayment}
+            />
           </LayoutSingleColumn>
         </ScrollView>
-        <OrderSummary />
+        <OrderSummary displayed={this.state.transactionAmount !== 0} />
       </React.Fragment>
     );
   };
 }
+
+const InsuranceOverviewSceneWithContext = withInsuranceOverviewSceneContext(
+  InsuranceOverviewScene,
+);
 
 type ContainerProps = {|
   navigation: NavigationType,
@@ -82,7 +105,7 @@ export default class InsuranceOverviewSceneContainer extends React.Component<
 > {
   renderInnerComponent = (response: InsuranceOverviewSceneQueryResponse) => {
     return (
-      <InsuranceOverviewScene
+      <InsuranceOverviewSceneWithContext
         data={response}
         navigation={this.props.navigation}
       />
@@ -104,7 +127,14 @@ export default class InsuranceOverviewSceneContainer extends React.Component<
                   ... on BookingInterface {
                     ...DestinationImage
                     ...TripInfo
-                    ...InsuranceOverviewPassengerMenuGroup
+                    passengers {
+                      databaseId
+                      fullName
+                      title
+                      birthday
+                      databaseId
+                      insuranceType
+                    }
                   }
                 }
               }

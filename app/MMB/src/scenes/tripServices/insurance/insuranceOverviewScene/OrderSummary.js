@@ -15,7 +15,14 @@ function Text({ children }) {
   return <NativeText style={styleSheet.text}>{children}</NativeText>;
 }
 
-export default function OrderSummary() {
+type Props = {|
+  +displayed: boolean,
+|};
+
+export default function OrderSummary(props: Props) {
+  if (!props.displayed) {
+    return null;
+  }
   return (
     <View style={styleSheet.wrapper}>
       <View style={styleSheet.row}>

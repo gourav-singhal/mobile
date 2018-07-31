@@ -7,14 +7,26 @@ import { Translation } from '@kiwicom/mobile-localization';
 import idx from 'idx';
 
 import PassengerInsuranceMenuItem from './menuItem/PassengerInsuranceMenuItem';
-import type { InsuranceOverviewPassengerMenuGroup as PassengersType } from './__generated__/InsuranceOverviewPassengerMenuGroup.graphql';
+import InsuranceOverviewSceneContext from './insuranceOverviewScene/InsuranceOverviewSceneContext';
+import type {
+  InsuranceOverviewPassengerMenuGroup as PassengersType,
+  InsuranceType,
+} from './__generated__/InsuranceOverviewPassengerMenuGroup.graphql';
 
-type Props = {|
-  +data: PassengersType,
+type Passenger = {|
+  databaseId: ?number,
+  insuranceType: ?InsuranceType,
 |};
 
-const InsuranceOverviewPassengerMenuGroup = (props: Props) => {
+type PropsWithContext = {|
+  +data: PassengersType,
+  +initState: (passengers: Passenger[]) => void,
+|};
+
+const InsuranceOverviewPassengerMenuGroup = (props: PropsWithContext) => {
   const passengers = idx(props.data, _ => _.passengers) || [];
+  // props.initState([...passengers]);
+
   return (
     <TitledMenuGroup title={<Translation id="mmb.trip_services.order.pax" />}>
       {passengers.map(passenger => (
@@ -26,14 +38,16 @@ const InsuranceOverviewPassengerMenuGroup = (props: Props) => {
     </TitledMenuGroup>
   );
 };
-export default createFragmentContainer(
-  InsuranceOverviewPassengerMenuGroup,
-  graphql`
-    fragment InsuranceOverviewPassengerMenuGroup on BookingInterface {
-      passengers {
-        databaseId
-        ...PassengerInsuranceMenuItem
-      }
-    }
-  `,
+
+const InsuranceOverviewPassengerMenuGroupWithContext = () => (
+  <InsuranceOverviewSceneContext.Consumer>
+    {({ passengers, actions: { initState } }) => (
+      <InsuranceOverviewPassengerMenuGroup
+        initState={initState}
+        data={{ passengers }}
+      />
+    )}
+  </InsuranceOverviewSceneContext.Consumer>
 );
+
+export default InsuranceOverviewPassengerMenuGroupWithContext;

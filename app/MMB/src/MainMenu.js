@@ -7,6 +7,10 @@ import {
   type RelayRefetchProp,
 } from '@kiwicom/mobile-relay';
 import { RefreshableScrollView } from '@kiwicom/mobile-shared';
+import {
+  type NavigationType,
+  withNavigation,
+} from '@kiwicom/mobile-navigation';
 import idx from 'idx';
 
 import Header from './components/header/Header';
@@ -21,6 +25,7 @@ type Props = {|
   +openMenu: string => void,
   +data: BookingType,
   +relay: RelayRefetchProp,
+  +navigation: NavigationType,
 |};
 
 type State = {|
@@ -59,6 +64,10 @@ class MainMenu extends React.Component<Props, State> {
       },
     );
   };
+
+  componentDidMount() {
+    this.props.navigation.navigate('mmb.trip_services.insurance');
+  }
 
   render = () => {
     const { activeId } = this.state;
@@ -102,7 +111,7 @@ class MainMenu extends React.Component<Props, State> {
 }
 
 export default createRefetchContainer(
-  MainMenu,
+  withNavigation(MainMenu),
   graphql`
     fragment MainMenu on BookingInterface {
       id

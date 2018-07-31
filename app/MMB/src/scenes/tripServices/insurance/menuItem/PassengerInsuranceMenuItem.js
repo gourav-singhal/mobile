@@ -24,12 +24,12 @@ const PassengerInsuranceMenuItem = (props: Props) => {
 
   function onPress() {
     props.navigation.navigate('mmb.trip_services.insurance.selection', {
-      passenger,
+      databaseId: passenger.databaseId,
     });
   }
   return (
     <PassengerMenuItem
-      passengerFullName={fullName}
+      passengerFullName={fullName + passenger.databaseId}
       onPress={onPress}
       menuRightContent={
         <PassengerMenuRightContent insuranceType={insuranceType} />
@@ -38,15 +38,4 @@ const PassengerInsuranceMenuItem = (props: Props) => {
   );
 };
 
-export default createFragmentContainer(
-  withNavigation(PassengerInsuranceMenuItem),
-  graphql`
-    fragment PassengerInsuranceMenuItem on Passenger {
-      fullName
-      title
-      birthday
-      databaseId
-      insuranceType
-    }
-  `,
-);
+export default withNavigation(PassengerInsuranceMenuItem);

@@ -18,7 +18,7 @@ import LoungeMenuItem from './LoungeMenuItem';
 import ParkingMenuItem from './ParkingMenuItem';
 import InsuranceMenuItem from './InsuranceMenuItem';
 import CarRentalMenuItem from './CarRentalMenuItem';
-import InsuranceOverviewScene from './insurance/InsuranceOverviewScene';
+import InsuranceOverviewScene from './insurance/insuranceOverviewScene/InsuranceOverviewScene';
 import InsuranceSelectionSceneContainer from './insurance/insuranceSelectionScene/InsuranceSelectionSceneContainer';
 import PaymentScene from './insurance/PaymentScene';
 import RefundScene from './insurance/RefundScene';
