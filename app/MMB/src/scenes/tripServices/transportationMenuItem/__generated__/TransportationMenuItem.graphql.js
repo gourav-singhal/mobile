@@ -8,7 +8,7 @@
 
 /*::
 import type { ConcreteFragment } from 'relay-runtime';
-type LocationPopupButton$ref = any;
+type TransportLocationItem$ref = any;
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type TransportationMenuItem$ref: FragmentReference;
 export type TransportationMenuItem = {|
@@ -16,9 +16,12 @@ export type TransportationMenuItem = {|
     +relevantLocations: ?$ReadOnlyArray<?{|
       +whitelabelURL: ?string,
       +location: ?{|
-        +$fragmentRefs: LocationPopupButton$ref
+        +location: ?{|
+          +lat: ?number,
+          +lng: ?number,
+        |},
+        +$fragmentRefs: TransportLocationItem$ref,
       |},
-      +date: ?any,
     |}>
   |},
   +$refType: TransportationMenuItem$ref,
@@ -69,17 +72,35 @@ const node/*: ConcreteFragment*/ = {
               "selections": [
                 {
                   "kind": "FragmentSpread",
-                  "name": "LocationPopupButton",
+                  "name": "TransportLocationItem",
                   "args": null
+                },
+                {
+                  "kind": "LinkedField",
+                  "alias": null,
+                  "name": "location",
+                  "storageKey": null,
+                  "args": null,
+                  "concreteType": "Coordinates",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "kind": "ScalarField",
+                      "alias": null,
+                      "name": "lat",
+                      "args": null,
+                      "storageKey": null
+                    },
+                    {
+                      "kind": "ScalarField",
+                      "alias": null,
+                      "name": "lng",
+                      "args": null,
+                      "storageKey": null
+                    }
+                  ]
                 }
               ]
-            },
-            {
-              "kind": "ScalarField",
-              "alias": null,
-              "name": "date",
-              "args": null,
-              "storageKey": null
             }
           ]
         }
@@ -88,5 +109,5 @@ const node/*: ConcreteFragment*/ = {
   ]
 };
 // prettier-ignore
-(node/*: any*/).hash = 'ca50877455fd4c1e03885ed32bd28e8f';
+(node/*: any*/).hash = '2e45795206df04548bec5118e1af4222';
 module.exports = node;

@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash bf8147437f0cac1d193ebaf65320d1f8
+ * @relayHash e0b12b701700db4760f6fa56a92ea94b
  */
 
 /* eslint-disable */
@@ -129,11 +129,22 @@ fragment TransportationMenuItem on WhitelabeledServices {
     relevantLocations {
       whitelabelURL
       location {
-        ...LocationPopupButton
+        ...TransportLocationItem
+        location {
+          lat
+          lng
+        }
         id
       }
-      date
     }
+  }
+}
+
+fragment TransportLocationItem on Location {
+  ...LocationPopupButton
+  location {
+    lat
+    lng
   }
 }
 
@@ -213,13 +224,39 @@ v3 = {
   "storageKey": null
 },
 v4 = {
+  "kind": "LinkedField",
+  "alias": null,
+  "name": "city",
+  "storageKey": null,
+  "args": null,
+  "concreteType": "LocationArea",
+  "plural": false,
+  "selections": [
+    v3
+  ]
+},
+v5 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "locationId",
+  "args": null,
+  "storageKey": null
+},
+v6 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "countryFlagURL",
+  "args": null,
+  "storageKey": null
+},
+v7 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "id",
   "args": null,
   "storageKey": null
 },
-v5 = {
+v8 = {
   "kind": "LinkedField",
   "alias": null,
   "name": "location",
@@ -228,40 +265,17 @@ v5 = {
   "concreteType": "Location",
   "plural": false,
   "selections": [
-    {
-      "kind": "LinkedField",
-      "alias": null,
-      "name": "city",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "LocationArea",
-      "plural": false,
-      "selections": [
-        v3
-      ]
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "locationId",
-      "args": null,
-      "storageKey": null
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "countryFlagURL",
-      "args": null,
-      "storageKey": null
-    },
-    v4
+    v4,
+    v5,
+    v6,
+    v7
   ]
 },
-v6 = [
+v9 = [
   v2,
-  v5
+  v8
 ],
-v7 = [
+v10 = [
   {
     "kind": "LinkedField",
     "alias": null,
@@ -286,7 +300,7 @@ return {
   "operationKind": "query",
   "name": "TripServiceRefreshContainerQuery",
   "id": null,
-  "text": "query TripServiceRefreshContainerQuery(\n  $bookingId: Int!\n  $authToken: String!\n) {\n  singleBooking(id: $bookingId, authToken: $authToken) {\n    __typename\n    ...TripServiceRefreshContainer\n    id\n  }\n}\n\nfragment TripServiceRefreshContainer on BookingInterface {\n  databaseId\n  authToken\n  ...InsuranceMenuItemContainer\n  availableWhitelabeledServices {\n    ...CarRentalMenuItem\n    ...LoungeMenuItem\n    ...ParkingMenuItem\n    ...HotelMenuItem\n    ...TransportationMenuItem\n  }\n}\n\nfragment InsuranceMenuItemContainer on BookingInterface {\n  __typename\n  status\n  passengers {\n    nationality\n  }\n  isPastBooking\n  ... on BookingOneWay {\n    trip {\n      ...InsuranceMenuItem\n    }\n  }\n  ... on BookingReturn {\n    outbound {\n      ...InsuranceMenuItem\n    }\n  }\n  ... on BookingMulticity {\n    trips {\n      ...InsuranceMenuItem\n    }\n  }\n}\n\nfragment CarRentalMenuItem on WhitelabeledServices {\n  carRental {\n    relevantCities {\n      whitelabelURL\n      location {\n        ...LocationPopupButton\n        id\n      }\n    }\n  }\n}\n\nfragment LoungeMenuItem on WhitelabeledServices {\n  lounge {\n    relevantAirports {\n      whitelabelURL\n      location {\n        ...LocationPopupButton\n        id\n      }\n    }\n  }\n}\n\nfragment ParkingMenuItem on WhitelabeledServices {\n  parking {\n    whitelabelURL\n  }\n}\n\nfragment HotelMenuItem on WhitelabeledServices {\n  hotel {\n    roomsConfiguration {\n      adultsCount\n      children {\n        age\n      }\n    }\n    relevantLocations {\n      ...LocationItem\n      checkin\n      checkout\n      location {\n        id\n      }\n      hotelCity {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment TransportationMenuItem on WhitelabeledServices {\n  transportation {\n    relevantLocations {\n      whitelabelURL\n      location {\n        ...LocationPopupButton\n        id\n      }\n      date\n    }\n  }\n}\n\nfragment LocationPopupButton on Location {\n  city {\n    name\n  }\n  locationId\n  ...CountryFlag\n}\n\nfragment CountryFlag on Location {\n  countryFlagURL\n}\n\nfragment LocationItem on HotelServiceRelevantLocation {\n  checkin\n  checkout\n  hotelCity {\n    id\n    name\n  }\n  location {\n    ...LocationPopupButton\n    id\n  }\n}\n\nfragment InsuranceMenuItem on Trip {\n  departure {\n    time\n  }\n}\n",
+  "text": "query TripServiceRefreshContainerQuery(\n  $bookingId: Int!\n  $authToken: String!\n) {\n  singleBooking(id: $bookingId, authToken: $authToken) {\n    __typename\n    ...TripServiceRefreshContainer\n    id\n  }\n}\n\nfragment TripServiceRefreshContainer on BookingInterface {\n  databaseId\n  authToken\n  ...InsuranceMenuItemContainer\n  availableWhitelabeledServices {\n    ...CarRentalMenuItem\n    ...LoungeMenuItem\n    ...ParkingMenuItem\n    ...HotelMenuItem\n    ...TransportationMenuItem\n  }\n}\n\nfragment InsuranceMenuItemContainer on BookingInterface {\n  __typename\n  status\n  passengers {\n    nationality\n  }\n  isPastBooking\n  ... on BookingOneWay {\n    trip {\n      ...InsuranceMenuItem\n    }\n  }\n  ... on BookingReturn {\n    outbound {\n      ...InsuranceMenuItem\n    }\n  }\n  ... on BookingMulticity {\n    trips {\n      ...InsuranceMenuItem\n    }\n  }\n}\n\nfragment CarRentalMenuItem on WhitelabeledServices {\n  carRental {\n    relevantCities {\n      whitelabelURL\n      location {\n        ...LocationPopupButton\n        id\n      }\n    }\n  }\n}\n\nfragment LoungeMenuItem on WhitelabeledServices {\n  lounge {\n    relevantAirports {\n      whitelabelURL\n      location {\n        ...LocationPopupButton\n        id\n      }\n    }\n  }\n}\n\nfragment ParkingMenuItem on WhitelabeledServices {\n  parking {\n    whitelabelURL\n  }\n}\n\nfragment HotelMenuItem on WhitelabeledServices {\n  hotel {\n    roomsConfiguration {\n      adultsCount\n      children {\n        age\n      }\n    }\n    relevantLocations {\n      ...LocationItem\n      checkin\n      checkout\n      location {\n        id\n      }\n      hotelCity {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment TransportationMenuItem on WhitelabeledServices {\n  transportation {\n    relevantLocations {\n      whitelabelURL\n      location {\n        ...TransportLocationItem\n        location {\n          lat\n          lng\n        }\n        id\n      }\n    }\n  }\n}\n\nfragment TransportLocationItem on Location {\n  ...LocationPopupButton\n  location {\n    lat\n    lng\n  }\n}\n\nfragment LocationPopupButton on Location {\n  city {\n    name\n  }\n  locationId\n  ...CountryFlag\n}\n\nfragment CountryFlag on Location {\n  countryFlagURL\n}\n\nfragment LocationItem on HotelServiceRelevantLocation {\n  checkin\n  checkout\n  hotelCity {\n    id\n    name\n  }\n  location {\n    ...LocationPopupButton\n    id\n  }\n}\n\nfragment InsuranceMenuItem on Trip {\n  departure {\n    time\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -406,7 +420,7 @@ return {
                     "args": null,
                     "concreteType": "CarRentalServiceRelevantCities",
                     "plural": true,
-                    "selections": v6
+                    "selections": v9
                   }
                 ]
               },
@@ -427,7 +441,7 @@ return {
                     "args": null,
                     "concreteType": "LoungeServiceRelevantAirports",
                     "plural": true,
-                    "selections": v6
+                    "selections": v9
                   }
                 ]
               },
@@ -520,11 +534,11 @@ return {
                         "concreteType": "HotelCity",
                         "plural": false,
                         "selections": [
-                          v4,
+                          v7,
                           v3
                         ]
                       },
-                      v5
+                      v8
                     ]
                   }
                 ]
@@ -548,13 +562,45 @@ return {
                     "plural": true,
                     "selections": [
                       v2,
-                      v5,
                       {
-                        "kind": "ScalarField",
+                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "date",
+                        "name": "location",
+                        "storageKey": null,
                         "args": null,
-                        "storageKey": null
+                        "concreteType": "Location",
+                        "plural": false,
+                        "selections": [
+                          v4,
+                          v5,
+                          v6,
+                          {
+                            "kind": "LinkedField",
+                            "alias": null,
+                            "name": "location",
+                            "storageKey": null,
+                            "args": null,
+                            "concreteType": "Coordinates",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "kind": "ScalarField",
+                                "alias": null,
+                                "name": "lat",
+                                "args": null,
+                                "storageKey": null
+                              },
+                              {
+                                "kind": "ScalarField",
+                                "alias": null,
+                                "name": "lng",
+                                "args": null,
+                                "storageKey": null
+                              }
+                            ]
+                          },
+                          v7
+                        ]
                       }
                     ]
                   }
@@ -562,7 +608,7 @@ return {
               }
             ]
           },
-          v4,
+          v7,
           {
             "kind": "InlineFragment",
             "type": "BookingOneWay",
@@ -575,7 +621,7 @@ return {
                 "args": null,
                 "concreteType": "Trip",
                 "plural": false,
-                "selections": v7
+                "selections": v10
               }
             ]
           },
@@ -591,7 +637,7 @@ return {
                 "args": null,
                 "concreteType": "Trip",
                 "plural": true,
-                "selections": v7
+                "selections": v10
               }
             ]
           },
@@ -607,7 +653,7 @@ return {
                 "args": null,
                 "concreteType": "Trip",
                 "plural": false,
-                "selections": v7
+                "selections": v10
               }
             ]
           }

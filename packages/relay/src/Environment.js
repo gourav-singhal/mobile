@@ -17,7 +17,8 @@ type FetcherResponse = {|
 |};
 
 const ASYNC_STORE_KEY = '@OfflineStore:key';
-const GRAPHQL_URL = 'https://graphql.kiwi.com/';
+const GRAPHQL_URL = 'http://localhost:3000/';
+// const GRAPHQL_URL = 'https://graphql.kiwi.com/';
 
 const store = new Store(new RecordSource());
 
