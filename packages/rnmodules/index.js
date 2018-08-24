@@ -2,3 +2,4 @@
 
 export { translate } from './translation/TranslationManager';
 export { translateAsync } from './translation/TranslationManager';
+export { formatAmount } from './currency/CurrencyFormatter';
